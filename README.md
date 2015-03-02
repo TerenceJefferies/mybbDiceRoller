@@ -24,3 +24,4 @@ Names have been assigned to rolls to ensure users cannot apply higher/preferable
 Rules:
 
 - Rolls cannot have the same name, and the latest roll with the same name will overwrite the previous one.
+- Roll names cannot have spaces in them
