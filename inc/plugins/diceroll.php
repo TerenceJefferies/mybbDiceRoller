@@ -15,7 +15,7 @@
             "Website"               =>                  "http://101stdivision.net",
             "author"                =>                  "NINTHTJ",
             "authorsite"            =>                  "http://101stdivision.net",
-            "version"               =>                  "1.0",
+            "version"               =>                  "1.1",
             "guid"                  =>                  "",
             "compatibility"         =>                  "18*"
         );
@@ -109,7 +109,6 @@
           $plugins->add_hook("datahandler_post_insert_thread_post", "diceroll_roll");
           $plugins -> add_hook("postbit","diceroll_appendrolls");
         }
-        //var_dump($diceroll_enable);
     }
 
     /**************************************************************************/
@@ -141,32 +140,34 @@
         if($post['diceroll']) {
             $rollArray = @unserialize($post['diceroll']);
             if(is_array($rollArray)) {
-                $post['message'] .= '<br /><br /><span style="color:purple;"><i>Dice rolls attached to this post:</i><br />';
-                if($diceroll_verificationvisible) {
-                  $post['message'] .= 'Verification Code: ' . sha1($diceroll_salt . $post['pid']) . '<br />';
-                }
-                foreach($rollArray as $rollName => $sidedDice) {
-                    foreach($sidedDice as $numberOfSides => $result) {
-                        $post['message'] .= '<br /><i>' . $rollName . ' (' . $numberOfSides . ' sided dice):';
-                        $appendRolls = '';
-                        $totalResult = 0;
-                        $count = 0;
-                        foreach($result as $rollOffset => $rollResult) {
-                            if($count > 0) { $appendRolls .= ','; }
-                            $appendRolls .= ($rollOffset + 1) . '=' . $rollResult;
-                            $totalResult += $rollResult;
-                            $count ++;
-                        }
-                        if($count > 1) {
-                          $appendRolls .= ' = ' . $totalResult;
-                        } else {
-                          $appendRolls = $totalResult;
-                        }
-                        $post['message'] .= $appendRolls;
+                if(count($rollArray) > 0) {
+                    $post['message'] .= '<br /><br /><span style="color:purple;"><i>Dice rolls attached to this post:</i><br />';
+                    if($diceroll_verificationvisible) {
+                      $post['message'] .= 'Verification Code: ' . sha1($diceroll_salt . $post['pid']) . '<br />';
                     }
-                    $post['message'] .= '</i>';
+                    foreach($rollArray as $rollName => $sidedDice) {
+                        foreach($sidedDice as $numberOfSides => $result) {
+                            $post['message'] .= '<br /><i>' . $rollName . ' (' . $numberOfSides . ' sided dice):';
+                            $appendRolls = '';
+                            $totalResult = 0;
+                            $count = 0;
+                            foreach($result as $rollOffset => $rollResult) {
+                                if($count > 0) { $appendRolls .= ','; }
+                                $appendRolls .= ($rollOffset + 1) . '=' . $rollResult;
+                                $totalResult += $rollResult;
+                                $count ++;
+                            }
+                            if($count > 1) {
+                              $appendRolls .= ' = ' . $totalResult;
+                            } else {
+                              $appendRolls = $totalResult;
+                            }
+                            $post['message'] .= $appendRolls;
+                        }
+                        $post['message'] .= '</i>';
+                    }
+                    $post['message'] .= '</span>';
                 }
-                $post['message'] .= '</span>';
             }
         }
     }
