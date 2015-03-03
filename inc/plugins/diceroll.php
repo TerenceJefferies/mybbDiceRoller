@@ -119,19 +119,21 @@
         $rollArray = array();
         $matches = array();
         preg_match_all("!\[roll ([A-z0-9]+) ([0-9]+)d([0-9]+)\]!i",$msg,$matches,PREG_SET_ORDER);
-        foreach($matches as $match) {
-            $rollName = $match[1];
-            $numberOfRolls = $match[2];
-            $sidedDice = $match[3];
-            if($rollName && $numberOfRolls > 0 && $numberOfRolls < 16 && $sidedDice > 0 && $sidedDice < 36) {
-                for($roll = 0; $roll < $numberOfRolls; $roll ++) {
-                    $rollArray[$rollName][$sidedDice][$roll] = rand(1,$sidedDice);
+        if($matches) {
+            foreach($matches as $match) {
+                $rollName = $match[1];
+                $numberOfRolls = $match[2];
+                $sidedDice = $match[3];
+                if($rollName && $numberOfRolls > 0 && $numberOfRolls < 16 && $sidedDice > 0 && $sidedDice < 36) {
+                    for($roll = 0; $roll < $numberOfRolls; $roll ++) {
+                        $rollArray[$rollName][$sidedDice][$roll] = rand(1,$sidedDice);
+                    }
                 }
-            }
-            $post -> post_insert_data['message'] = str_replace($match[0],"",$post -> post_insert_data['message']);
-       }
-       $saveString = serialize($rollArray);
-       $post->post_insert_data['diceroll'] = $db -> escape_string($saveString);
+                $post -> post_insert_data['message'] = str_replace($match[0],"",$post -> post_insert_data['message']);
+           }
+           $saveString = serialize($rollArray);
+           $post->post_insert_data['diceroll'] = $db -> escape_string($saveString);
+        }
     }
 
     function diceroll_appendrolls(&$post) {
